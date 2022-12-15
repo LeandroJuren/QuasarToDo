@@ -59,7 +59,17 @@ export default defineComponent({
   },
   methods: {
     deleteTask(i) {
-      this.tasks.splice(i, 1);
+      this.$q
+        .dialog({
+          dark: true,
+          title: "Delete task",
+          message: "Are you sure?",
+          cancel: true,
+          persistent: false,
+        })
+        .onOk(() => {
+          this.tasks.splice(i, 1);
+        });
     },
   },
 });
