@@ -1,6 +1,21 @@
 <template>
   <q-page class="q-pa-lg bg-red-3 column">
     <!-- <h5 class="q-mt-none">Todo</h5> -->
+    <div class="row q-pa-sm bg-primary">
+      <q-input
+        class="col"
+        square
+        bg-color="cyan"
+        v-model="newTask"
+        placeholder="Add task"
+        dense
+        @keyup.enter="addTask"
+      >
+        <template v-slot:append>
+          <q-btn round dense flat icon="add" @click="addTask" />
+        </template>
+      </q-input>
+    </div>
     <q-list class="bg-yellow" separator bordered>
       <q-item
         v-for="(task, index) in tasks"
@@ -32,6 +47,10 @@
         </q-item-section>
       </q-item>
     </q-list>
+    <div v-if="!tasks.length" class="no-tasks absolute-center">
+      <q-icon name="check" size="100px" color="primary" />
+      <div class="text-h5 text-primary text-center">No tasks</div>
+    </div>
   </q-page>
 </template>
 
@@ -41,24 +60,25 @@ import { defineComponent } from "vue";
 export default defineComponent({
   data() {
     return {
+      newTask: "",
       tasks: [
-        {
-          title: "Get apple",
-          done: false,
-        },
-        {
-          title: "Eat apple",
-          done: false,
-        },
-        {
-          title: "Poo apple",
-          done: true,
-        },
+        // {
+        //   title: "Get apple",
+        //   done: false,
+        // },
+        // {
+        //   title: "Eat apple",
+        //   done: false,
+        // },
+        // {
+        //   title: "Poo apple",
+        //   done: true,
+        // },
       ],
     };
   },
   methods: {
-    deleteTask(i) {
+    deleteTask(index) {
       this.$q
         .dialog({
           dark: true,
@@ -68,8 +88,17 @@ export default defineComponent({
           persistent: false,
         })
         .onOk(() => {
-          this.tasks.splice(i, 1);
+          this.tasks.splice(index, 1);
+          this.$q.notify("Task deleted.");
         });
+    },
+    addTask() {
+      this.tasks.push({
+        title: this.newTask,
+        done: false,
+      });
+      this.$q.notify(this.newTask);
+      this.newTask = "";
     },
   },
 });
@@ -80,5 +109,8 @@ export default defineComponent({
     text-decoration: line-through;
     color: lightgreen;
   }
+}
+.no-tasks {
+  opacity: 0.5;
 }
 </style>
